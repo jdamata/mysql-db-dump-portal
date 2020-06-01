@@ -1,0 +1,42 @@
+extends layout
+block pageContent
+ 
+  form(method='POST' action='/dump')
+    div.form-group
+      select(id="instance", name="instance")
+    div.form-group
+      select(id="db", name="db")
+    button.btn.btn-primary(type='submit') Dump
+
+
+  script.
+    function add_option (select_id, text) {
+      var select = document.getElementById(select_id);
+      select.options[select.options.length] = new Option(text);
+    }
+
+    function clear_combo (select_id) {
+      var select = document.getElementById(select_id);
+      select.options.length = 0;
+    }
+
+    function load_combo (select_id, option_array) {
+      for (var i = 0; i < option_array.length; i++) {
+        add_option (select_id, option_array[i]);
+      }
+    }
+
+    var instance_list = []
+    const db_json = JSON.parse("#{db_json}".replace(/&quot;/g,'"'))
+    for (var key in db_json) {
+      instance_list.push(key)
+    }
+    load_combo ("instance", instance_list)
+
+    var instance = document.getElementById("instance")
+    load_combo ("db", db_json[instance.options[ instance.selectedIndex ].value])
+    document.getElementById('instance').onclick = instance_onchange;
+    function instance_onchange () {
+      clear_combo ("db")
+      load_combo ("db", db_json[instance.options[ instance.selectedIndex ].value])
+    }

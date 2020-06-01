@@ -1,0 +1,41 @@
+extends layout
+
+block pageContent
+    link(href='/stylesheets/table.css', rel='stylesheet')
+
+    script.
+    
+        function generateTableHead(table, headers) {
+            var thead = table.createTHead();
+            var row = thead.insertRow();
+            for (var key of headers) {
+              var th = document.createElement("th");
+              var text = document.createTextNode(key);
+              th.appendChild(text);
+              row.appendChild(th);
+            }
+        }
+
+        function generateRecord(tr, data) {
+            var td = document.createElement('td');
+            var text = document.createTextNode(data);
+            td.appendChild(text);
+            tr.appendChild(td);
+        }
+    
+        function generateTable(table, data) {
+            for (var element in data['Contents']) {
+              var row = table.insertRow();
+              var tr = document.createElement('tr');
+              generateRecord(tr, data['Contents'][element]['Key'])
+              generateRecord(tr, data['Contents'][element]['Size'])
+              generateRecord(tr, data['Contents'][element]['LastModified'])
+              table.appendChild(tr);
+              document.body.appendChild(table);
+            }
+        }
+    
+        var table = document.createElement("table");
+        table.setAttribute("id", "dbs");
+        generateTable(table, !{object_list});
+        generateTableHead(table, ['Name', 'Size in Bytes', 'Last Modified']);
